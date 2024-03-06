@@ -3,7 +3,8 @@ import os
 import cv2
 from matplotlib import pyplot as plt
 
-from IMGpath import IMGdir_labtop
+# from IMGpath import IMGdir_labtop
+# from IMGpath import IMGdir_lab
 
 
 # 정해진 디렉토리의 이미지를 List로 return
@@ -14,9 +15,9 @@ def getIMGS():
 
     dataList = []
     for img in IMGfiles:
-        dataList.append(IMGdir + "\\" + cv2.imread(img))
-
-    plt.show(dataList[0])
+        dataList.append(cv2.imread(img, cv2.COLOR_BGR2GRAY))
+    # testing 이미지 출력
+    plt.imshow(dataList[0])
+    plt.show()
     return(dataList)
 
-print(IMGdir_labtop)
