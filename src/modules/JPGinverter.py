@@ -1,5 +1,5 @@
 import os
-
+import numpy as np
 import cv2
 from matplotlib import pyplot as plt
 
@@ -16,8 +16,8 @@ def getIMGS():
     dataList = []
     for img in IMGfiles:
         dataList.append(cv2.imread(img, cv2.COLOR_BGR2GRAY))
-    # testing 이미지 출력
-    plt.imshow(dataList[0])
-    plt.show()
-    return(dataList)
+        # testing 이미지 출력
+        # plt.imshow(dataList[0])
+        # plt.show()
+    return(np.array(dataList))
 
