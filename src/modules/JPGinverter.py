@@ -15,9 +15,9 @@ def getIMGS():
 
     dataList = []
     for img in IMGfiles:
-        dataList.append(cv2.imread(img, cv2.COLOR_BGR2GRAY))
+        dataList.append(cv2.imread(img, 0))
         # testing 이미지 출력
-        # plt.imshow(dataList[0])
-        # plt.show()
+        plt.imshow(dataList[0])
+        plt.show()
     return(np.array(dataList))
 

@@ -2,55 +2,59 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import matplotlib.pyplot as plt
+from torch.utils.data import DataLoader, TensorDataset
 
 # 임의의 이미지 특징과 연속적인 각도값 생성 (예시)
-num_samples = 1000
-image_features = torch.linspace(-4,4, num_samples).view(-1, 1)  # 임의의 이미지 특징
-angles = 3 * image_features + torch.FloatTensor(num_samples, 1).normal_(30, 10)  # 연속적인 각도값
+# 예제 데이터 생성 (이미지, K값)
+X_image = torch.randn(100, 1, 255, 255)  # 100 samples, 1 channel, 127x127 size
+k_values = 50 * torch.rand(100, 1)  # K값, 0에서 50 사이의 랜덤 값 사용
 
 # 선형회귀 모델 정의
-class LinearRegressionModel(nn.Module):
+# 모델 정의
+class KRegressionModel(nn.Module):
     def __init__(self):
-        super(LinearRegressionModel, self).__init__()
-        self.linear = nn.Linear(1, 1)
+        super(KRegressionModel, self).__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+        )
+        self.fc = nn.Sequential(
+            nn.Linear(64 * 31 * 31, 256),  # Adjust the input size based on your architecture
+            nn.ReLU(),
+            nn.Linear(256, 1),  # Output 1 value for K
+            nn.Sigmoid()  # Sigmoid 함수를 이용하여 0에서 1 사이의 값으로 변환
+        )
 
     def forward(self, x):
-        return self.linear(x)
+        x = self.features(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        return x * 50  # 0에서 1 사이의 값을 0에서 50 사이로 변환
 
-# 모델 초기화 및 옵티마이저 설정
-model = LinearRegressionModel()
+
+# 모델, 손실 함수, 최적화 함수 초기화
+model = KRegressionModel()
 criterion = nn.MSELoss()
-optimizer = optim.SGD(model.parameters(), lr=0.01)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-# 학습 과정
-num_epochs = 1000
+# DataLoader를 사용하여 배치 처리
+dataset = TensorDataset(X_image, k_values)
+dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
 
-for epoch in range(num_epochs):
-    # 모델 예측
-    predictions = model(image_features)
+# 회귀 모델 학습
+epochs = 10
+for epoch in range(epochs):
+    for inputs, k_values in dataloader:
+        optimizer.zero_grad()
+        outputs = model(inputs)
+        loss = criterion(outputs, k_values)
+        loss.backward()
+        optimizer.step()
 
-    # 손실 계산 및 역전파
-    loss = criterion(predictions, angles)
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
+    print(f"Epoch {epoch + 1}/{epochs}, Loss: {loss.item()}")
 
-    # 학습 과정 출력
-    if (epoch + 1) % 100 == 0:
-        print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
 
-# 테스트 데이터 생성 (예시)
-test_image_features = torch.randn(10, 1)  # 테스트를 위한 이미지 특징
-# 학습된 모델을 사용하여 각도값 예측
-predicted_angles = model(test_image_features)
-
-# 시각화
-plt.scatter(image_features.numpy(), angles.numpy(), label='Original Data')
-plt.plot(np.linspace(-4,4, 100),
-         model(torch.linspace(-4,4, 100).view(-1, 1)).detach().numpy()
-         , label='Predicted Line', color='red')
-plt.xlabel('Image Features')
-plt.ylabel('Angles')
-plt.legend()
-plt.show()
