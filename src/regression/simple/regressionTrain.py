@@ -3,7 +3,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
-from IMGseperating import img_sep_main
 from torchvision import models, transforms
 from PIL import Image
 
@@ -15,6 +14,7 @@ from PIL import Image
 # 선형회귀 모델 정의
 # 이미지 특성 예측을 위한 이미지 회귀 모델 정의
 # 이미지 크기를 224x224로 조정하는 전처리 단계 추가
+
 preprocess = transforms.Compose([
     transforms.Resize(256),
     transforms.CenterCrop(224),
@@ -28,22 +28,30 @@ class ImageRegressionModel(nn.Module):
         super(ImageRegressionModel, self).__init__()
         self.resnet = models.resnet18(pretrained=pretrained)
         self.resnet.fc = nn.Linear(self.resnet.fc.in_features, 1)
+        self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
-        return self.resnet(x)
+        x = self.resnet(x)
+        x = self.sigmoid(x)  # 시그모이드 함수를 이용해 0부터 1 사이의 값으로 변환
+        x = x * 70  # 값의 범위를 0~70으로 스케일링
+        return x
 
 # 예제 데이터 생성
 X_image = []
+Y_values = []
 for _ in range(100):
     # 임의의 이미지 생성
     image = Image.fromarray(np.uint8(np.random.rand(600, 800, 3) * 255))
     # 이미지 전처리
     image = preprocess(image)
     X_image.append(image)
+    # 랜덤한 각도 값 생성 (0부터 70까지)
+    angle_value = torch.rand(1) * 70
+    Y_values.append(angle_value)
 
 # 이미지를 텐서로 변환
 X_image = torch.stack(X_image)
-Y_values = torch.randn(100, 1)  # 예측할 이미지 특성값
+Y_values = torch.stack(Y_values)
 
 # 데이터셋 및 데이터로더 생성
 dataset = TensorDataset(X_image, Y_values)
@@ -65,3 +73,5 @@ for epoch in range(num_epochs):
         optimizer.step()
     print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
 
+# 모델 저장하기
+torch.save(model.state_dict(), 'image_regression_model.pth')
