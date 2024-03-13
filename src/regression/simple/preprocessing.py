@@ -1,5 +1,6 @@
 import os
 from torchvision import transforms
+
 from PIL import Image
 
 # 입력 디렉토리와 출력 디렉토리 경로
@@ -8,6 +9,7 @@ output_dir = "C:\\Users\\Hilal\\pycharmProjects\\softacturatorModel\\datas\\afte
 
 # 전처리 파이프라인 정의
 preprocess = transforms.Compose([
+    transforms.Pad(padding=(400, 160), fill=255),
     transforms.Resize(256),
     transforms.CenterCrop(224),
     transforms.ToTensor(),
