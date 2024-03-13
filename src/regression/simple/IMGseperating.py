@@ -3,10 +3,10 @@ import random
 img_size = 800 * 600
 channel = 1
 
+# 3차원 numpy array가 들어왔을때 seperating
 # @return {list} Yvalue전처리 한 값
 def img_sep_main(datas):
     Yvalues = []
-    print(datas.shape)
     for i in range(len(datas)):
         Yvalues.append(image_seperator(datas[i]))
     return Yvalues
