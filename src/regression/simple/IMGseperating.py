@@ -1,15 +1,17 @@
 import numpy as np
 import random
-img_size = 225 * 225
+img_size = 800 * 600
 channel = 1
 
-Yvalues = []
+# @return {list} Yvalue전처리 한 값
 def img_sep_main(datas):
+    Yvalues = []
+    print(datas.shape)
     for i in range(len(datas)):
         Yvalues.append(image_seperator(datas[i]))
     return Yvalues
 
-#img는 225 x 225의 배열임
+#img는 800 x 600의 이미지 데이터
 def image_seperator(img):
     value = np.sum(img)
     if value > img_size * 0.7:
