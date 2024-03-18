@@ -4,8 +4,11 @@ from torchvision import transforms
 from PIL import Image
 
 # 입력 디렉토리와 출력 디렉토리 경로
-input_dir = "C:\\Users\\Hilal\\pycharmProjects\\softacturatorModel\\datas\\IMAGE6"
-output_dir = "C:\\Users\\Hilal\\pycharmProjects\\softacturatorModel\\datas\\afterIMG"
+# input_dir = "C:\\Users\\Hilal\\pycharmProjects\\softacturatorModel\\datas\\IMAGE6"
+# output_dir = "C:\\Users\\Hilal\\pycharmProjects\\softacturatorModel\\datas\\afterIMG"
+
+input_dir = "C:\\Users\\dgw04\\pycharmProjects\\softacturatorModel\\datas\\IMAGE6"
+output_dir = "C:\\Users\\dgw04\\pycharmProjects\\softacturatorModel\\datas\\afterIMG"
 
 # 전처리 파이프라인 정의
 preprocess = transforms.Compose([

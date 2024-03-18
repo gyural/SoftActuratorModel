@@ -1,4 +1,6 @@
 import numpy as np
+import os
+import re
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -36,26 +38,35 @@ class ImageRegressionModel(nn.Module):
         x = x * 70  # 값의 범위를 0~70으로 스케일링
         return x
 
-# 예제 데이터 생성
-X_image = []
+# 이미지 경로
+image_path = "C:\\Users\\dgw04\\pycharmProjects\\softacturatorModel\\datas\\afterIMG"
+# 이미지 파일명 목록
+image_filenames = os.listdir(image_path)
+# 이미지를 텐서로 변환하여 리스트에 추가
+X_images = []
+for filename in image_filenames:
+    # 이미지 불러오기
+    image = Image.open(os.path.join(image_path, filename))
+    # 이미지를 텐서로 변환
+    tensor_image = transforms.ToTensor()(image)
+    # 변환된 이미지를 리스트에 추가
+    X_images.append(tensor_image)
+
+# 파일 이름에서 숫자 부분 추출하여 float로 변환
 Y_values = []
-for _ in range(100):
-    # 임의의 이미지 생성
-    image = Image.fromarray(np.uint8(np.random.rand(600, 800, 3) * 255))
-    # 이미지 전처리
-    image = preprocess(image)
-    X_image.append(image)
-    # 랜덤한 각도 값 생성 (0부터 70까지)
-    angle_value = torch.rand(1) * 70
-    Y_values.append(angle_value)
+for filename in image_filenames:
+    float_number = float(re.findall(r'\d+\.\d+', filename)[0])
+    Y_values.append(float_number)
 
-# 이미지를 텐서로 변환
-X_image = torch.stack(X_image)
-Y_values = torch.stack(Y_values)
+# 텐서로 변환
+X_images_tensor = torch.stack(X_images)
+Y_values_tensor = torch.tensor(Y_values)
 
-# 데이터셋 및 데이터로더 생성
-dataset = TensorDataset(X_image, Y_values)
-data_loader = DataLoader(dataset, batch_size=32, shuffle=True)
+# 데이터셋 생성
+dataset = TensorDataset(X_images_tensor, Y_values_tensor)
+
+# 데이터로더 생성
+data_loader = DataLoader(dataset, batch_size=8, shuffle=True)
 
 # 모델 생성 및 손실 함수, 옵티마이저 정의
 model = ImageRegressionModel(pretrained=True)
@@ -69,6 +80,10 @@ for epoch in range(num_epochs):
         optimizer.zero_grad()
         outputs = model(inputs)
         loss = criterion(outputs, targets)
+        print("---------------------------------------")
+        for a, b in zip(outputs, targets):
+            print(a, b)
+        print("---------------------------------------")
         loss.backward()
         optimizer.step()
     print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
