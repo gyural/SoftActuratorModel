@@ -7,8 +7,8 @@ from PIL import Image
 # input_dir = "C:\\Users\\Hilal\\pycharmProjects\\softacturatorModel\\datas\\IMAGE6"
 # output_dir = "C:\\Users\\Hilal\\pycharmProjects\\softacturatorModel\\datas\\afterIMG"
 
-input_dir = "C:\\Users\\dgw04\\pycharmProjects\\softacturatorModel\\datas\\IMAGE6"
-output_dir = "C:\\Users\\dgw04\\pycharmProjects\\softacturatorModel\\datas\\afterIMG"
+input_dir = "C:\\Users\\Hilal\\pycharmProjects\\softacturatorModel\\datas\\IMAGE6"
+output_dir = "C:\\Users\\Hilal\\pycharmProjects\\softacturatorModel\\datas\\afterIMG"
 
 # 전처리 파이프라인 정의
 preprocess = transforms.Compose([
@@ -16,7 +16,7 @@ preprocess = transforms.Compose([
     transforms.Resize(256),
     transforms.CenterCrop(224),
     transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
 
 # 입력 디렉토리의 이미지 파일 목록 가져오기

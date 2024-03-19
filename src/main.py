@@ -1,7 +1,7 @@
 #main Function
 import torch
 import numpy as np
-from regression.simple.IMGseperating import img_sep_main
+from regression.simple.IMG_load import img_sep_main
 from modules.JPGinverter import getIMGS
 from matplotlib import pyplot as plt
 

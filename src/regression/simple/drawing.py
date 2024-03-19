@@ -1,17 +1,21 @@
-from regressionTrain import ImageRegressionModel, preprocess
 import torch
+from regressionTrain import ImageRegressionModel
+from IMG_load import IMG_loader
+model_path = "C:\\Users\\Hilal\\pycharmProjects\\SoftActuratorModel\\src\\regression\\simple\\image_regression_model.pth"
 
-#### 1. 랜덤한 이미지 생성 ####
+# 모델 클래스 초기화
+model = ImageRegressionModel()
+model.load_state_dict(torch.load(model_path))
 
-#### 2. 이미지 데이터 선형 모델에 대입 ####
-# 모델 생성 및 불러오기
-model = ImageRegressionModel(pretrained=True)
-model.load_state_dict(torch.load('image_regression_model.pth'))
+#모델을 평가(테스트) 모드로 설정합니다.
 model.eval()
 
-# 이미지를 모델에 입력하여 예측 수행
+# 출력 얻기
+imgs = torch.stack(IMG_loader())
 with torch.no_grad():
-    output = model(preprocess(image))
+    inputs = imgs
+    output = model(inputs)
 
-print('모델 예측 결과:', output.item())
+np = output.detach().numpy()
 
+print('모델 예측 결과:', np)
