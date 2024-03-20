@@ -75,10 +75,14 @@ def create_pointy_rectangle_dxf(filename, lower_left, upper_right, num_points, s
 
         # DXF 파일 저장
         doc.saveas(filename)
+        #함수 작동시 마다 points 리턴하기
+        return points
 
+###################### 수정된 부분 ###########################
+points_list = []
 # 파일 이름 및 직사각형의 좌표 설정
 for j in range (1, 101):
-    directory = "/content/drive/MyDrive/Design7/"
+    directory = "C:\\Users\\Hilal\\PycharmProjects\\SoftActuratorModel\\datas\\points\\"
     filename = directory + f"2D_actuator_design7_{j}.dxf"
     lower_left = (0, 0)
     upper_right = (20, 5)
@@ -87,4 +91,13 @@ for j in range (1, 101):
     thickness = 0.3
 
     # DXF 파일 생성
-    create_pointy_rectangle_dxf(filename, lower_left, upper_right, num_points, sharpness)
+    p = create_pointy_rectangle_dxf(filename, lower_left, upper_right, num_points, sharpness)
+    points_list.append(p)
+
+# Points 데이터 txt로 변환
+with open(f"{directory}\\points.txt", "w") as file:
+    for points in points_list:
+        for point in points:
+            file.write(f"({point[0]}, {point[1]}) ")
+        file.write(f"\n")
+###################### 수정된 부분 ###########################
