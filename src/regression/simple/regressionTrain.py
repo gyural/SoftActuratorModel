@@ -13,11 +13,13 @@ class ImageRegressionModel(nn.Module):
         self.resnet = models.resnet18(pretrained=pretrained)
         self.resnet.fc = nn.Linear(self.resnet.fc.in_features, 1)
         self.sigmoid = nn.Sigmoid()
+        self.relu = nn.ReLU()
+        self.ELU = nn.ELU()
+        self.leakyrelu = nn.LeakyReLU()
 
     def forward(self, x):
         x = self.resnet(x)
-        x = self.sigmoid(x)  # 시그모이드 함수를 이용해 0부터 1 사이의 값으로 변환
-        x = x * 30
+        x = x * 10
         return x
 
 if __name__ == "__main__":
@@ -31,23 +33,28 @@ if __name__ == "__main__":
     data_loader = DataLoader(dataset, batch_size=1, shuffle=True)
 
     # 모델 생성 및 손실 함수, 옵티마이저 정의
-    model = ImageRegressionModel(pretrained=True)
+    model = ImageRegressionModel()
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
     # 훈련 진행
-    num_epochs = 100
+    num_epochs = 10
     for epoch in range(num_epochs):
         for inputs, targets in data_loader:
             optimizer.zero_grad()
             outputs = model(inputs)
             loss = criterion(outputs, targets)
-            # print("---------------------------------------")
-            # for a, b in zip(outputs, targets):
-            #     print(a, b)
-            # print("---------------------------------------")
+            # if epoch == num_epochs - 1:
+            #     print("---------------------------------------")
+            #     for a, b in zip(outputs, targets):
+            #         print(a, b)
+            #     print("---------------------------------------")
             loss.backward()
             optimizer.step()
         print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
     # 모델 저장하기
     torch.save(model.state_dict(), 'image_regression_model.pth')
+
+    # input확인
+    # for inputs, targets in data_loader:
+    #     print(inputs.size())
