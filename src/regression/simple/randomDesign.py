@@ -82,7 +82,7 @@ def create_pointy_rectangle_dxf(filename, lower_left, upper_right, num_points, s
 points_list = []
 # 파일 이름 및 직사각형의 좌표 설정
 for j in range (1, 101):
-    directory = "C:\\Users\\Hilal\\PycharmProjects\\SoftActuratorModel\\datas\\points\\"
+    directory = "C:\\Users\\dgw04\\PycharmProjects\\SoftActuratorModel\\datas\\points\\"
     filename = directory + f"2D_actuator_design7_{j}.dxf"
     lower_left = (0, 0)
     upper_right = (20, 5)
