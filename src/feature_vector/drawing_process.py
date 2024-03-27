@@ -33,9 +33,9 @@ criterion = nn.MSELoss()
 target_value = 15
 result = []
 heapq.heappush(result, (-111, 0))
-cycle = 200
+cycle = 2000
 
-for _ in range(cycle):
+for iter in range(1, cycle+1):
     random_points = torch.tensor(simpleModel_load.get_random_points())
     with torch.no_grad():
         outputs = model(random_points)
@@ -48,5 +48,12 @@ for _ in range(cycle):
             heapq.heappush(result, (-1 * diff, idx))
         if len(result) < 10:
             heapq.heappush(result, head)
+    if(iter % 100 == 0):
+        sum_l = 0
+        for l, idx in result:
+            sum_l += l
+
+        print(f"[{iter}/{cycle}] complete")
+        print(f"avg loss: {sum_l/len(result)}")
 
 print(result)
