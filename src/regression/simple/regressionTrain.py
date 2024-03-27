@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
     # 훈련 진행
     loss_ = []
-    num_epochs = 10
+    num_epochs = 1000
     for epoch in range(num_epochs):
         total_loss = 0.0  # 전체 손실 초기화
         for inputs, targets in data_loader:
@@ -53,7 +53,7 @@ if __name__ == "__main__":
             total_loss += loss.item()  # 각 배치의 손실을 누적
         print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {total_loss / len(data_loader):.4f}')
     # 모델 저장하기
-    # torch.save(model.state_dict(), 'image_regression_model.pth')
+    torch.save(model.state_dict(), 'image_regression_model.pth')
 
 
     print("##############학습 완료############")
