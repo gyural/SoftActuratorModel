@@ -2,7 +2,7 @@ import ezdxf
 import random
 import numpy as np
 
-def create_pointy_rectangle_dxf(filename, lower_left, upper_right, num_points, sharpness):
+def create_pointy_rectangle_dxf(filename, lower_left, upper_right, num_points, sharpness, thickness):
         doc = ezdxf.new('R2010')  # 새로운 DXF 문서 생성
         msp = doc.modelspace()  # 모델 공간 얻기
 
@@ -91,7 +91,7 @@ for j in range (1, 101):
     thickness = 0.3
 
     # DXF 파일 생성
-    p = create_pointy_rectangle_dxf(filename, lower_left, upper_right, num_points, sharpness)
+    p = create_pointy_rectangle_dxf(filename, lower_left, upper_right, num_points, sharpness, thickness)
     points_list.append(p)
 
 # Points 데이터 txt로 변환

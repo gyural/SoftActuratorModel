@@ -37,7 +37,6 @@ if __name__ == "__main__":
     dataset = TensorDataset(X, Y)
     dataloader = DataLoader(dataset, batch_size=2, shuffle=True)
 
-
     # 훈련
     loss_ = []
     num_epochs = 8000
@@ -60,9 +59,11 @@ if __name__ == "__main__":
             print(f'Epoch [{epoch}/{num_epochs}], Average Loss: {total_loss/len(dataloader):.4f}')
 
     # 모델 저장하기
-    torch.save(model.state_dict(), 'feature_vector_model.pth')
+    # torch.save(model.state_dict(), 'feature_vector_model.pth')
     print("##############학습 완료############")
+
     #### 저장 이후 출력 테스팅
+    model.eval()
     for inputs, targets in dataloader:
         outputs = model(inputs)
         for a, b in zip(outputs, targets):

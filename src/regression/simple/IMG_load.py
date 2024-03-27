@@ -2,7 +2,7 @@ import os
 import re
 from torchvision import transforms
 from PIL import Image
-image_path = "C:\\Users\\dgw04\\PycharmProjects\\SoftActuratorModel\\datas\\afterIMG"
+image_path = "C:\\Users\\Hilal\\PycharmProjects\\SoftActuratorModel\\datas\\afterIMG"
 
 #전처리된 이미지를 tensor List로 반환
 def IMG_loader():
