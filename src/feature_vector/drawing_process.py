@@ -10,8 +10,8 @@ import simpleModel_load
 
 my_env = "dgw04"
 lab_env = "Hilal"
-# model_path = f"C:\\Users\\{my_env}\\pycharmProjects\\SoftActuratorModel\\src\\feature_vector\\feature_vector_model.pth"
-model_path = f"C:\\Users\\{my_env}\\pycharmProjects\\SoftActuratorModel\\src\\feature_vector\\feature_vector_model_labtop.pth"
+model_path = f"C:\\Users\\{lab_env}\\pycharmProjects\\SoftActuratorModel\\src\\feature_vector\\feature_vector_model.pth"
+# model_path = f"C:\\Users\\{lab_env}\\pycharmProjects\\SoftActuratorModel\\src\\feature_vector\\feature_vector_model_labtop.pth"
 
 # 데이터로더 생성
 X = torch.tensor(get_feature_points())
@@ -44,26 +44,27 @@ def model_test():
 def get_Top10_design(target_value):
     result = []
     heapq.heappush(result, (-111, 0))
-    cycle = 20
+    cycle = 200
 
     for iter in range(1, cycle+1):
-        random_points = torch.tensor(simpleModel_load.get_random_points())
+        random_points_outer, random_points_inner = simpleModel_load.get_random_points()
+
         with torch.no_grad():
-            outputs = model(random_points)
+            outputs = model(torch.tensor(random_points_outer))
 
         for idx, angle in enumerate(outputs):
             diff = abs(angle.item() - target_value)
             ### 힙의 요소와 비교
             head = heapq.heappop(result)
             if diff < head[0] * -1:
-                heapq.heappush(result, (-1 * diff, random_points[idx]))
+                heapq.heappush(result, (-1 * diff, random_points_outer[idx], random_points_inner[idx]))
             if len(result) < 10:
                 heapq.heappush(result, head)
 
         #testing 중간확인
-        if(iter % 1 == 0):
+        if(iter % 10 == 0):
             sum_l = 0
-            for l, idx in result:
+            for l, idx, _ in result:
                 sum_l += l
 
             print(f"[{iter}/{cycle}] complete")
@@ -71,32 +72,64 @@ def get_Top10_design(target_value):
 
     return result
 
-def points_drawing(points):
-    candi_numpy = np.array([points for _, points in candi])
+def points_drawing(points, target_angle):
+    outer_numpy = np.array([outer for _, outer, inner in points])
+    inner_list = [inner for _, outer, inner in points]
 
-    # 좌표 추출
-    x = candi_numpy[0][:, 0]
-    y = candi_numpy[0][:, 1]
+    #Drawing
+    for idx, point_out, point_in in enumerate(zip(outer_numpy, inner_list)):
+        # output 좌표 추출
+        x_out = point_out[:, 0] + point_out[:1, 0]
+        y_out = point_out[:, 1] + point_out[:1, 1]
+        # 처음 좌표를 마지막에 추가
+        x_out = np.append(x_out, point_out[0][0])
+        y_out = np.append(y_out, point_out[0][1])
 
-    # 그림 그리기
-    plt.figure(figsize=(6, 4))
-    plt.plot(x, y, marker='o', linestyle='-')
-    plt.title('Connected Points')
-    plt.xlabel('X')
-    plt.ylabel('Y')
-    plt.grid(True)
-    plt.show()
+        # input 좌표 추출
+        x_in = point_out[:, 0] + point_in[:1, 0]
+        y_in = point_out[:, 1] + point_in[:1, 1]
+        # 처음 좌표를 마지막에 추가
+        x_in= np.array(x_in)
+        y_in= np.array(y_in)
+        x_in = np.append(x_in, point_in[0][0])
+        y_in = np.append(y_in, point_in[0][1])
 
-    # 이미지 파일로 저장
-    # plt.savefig('connected_points.png')
-# ### candi 특징점 추출
-candi = get_Top10_design(15)
-# candi 출력해보기
-# for loss, points in candi:
-#     print(f"loss: {loss} points-shape: {np.shape(points)}, ")
+        # 그림 그리기
+        plt.figure(figsize=(6, 4))
+        plt.plot(x_out, y_out, marker='o', linestyle='-')
+        plt.plot(x_in, y_in, marker='o', linestyle='-')
+        plt.title(f"{target_angle} degrees Actuator design")
+        plt.grid(True)
 
-### numpy array로 바꾸기
-points_drawing(candi)
+        # 축과 눈금 숨기기
+        plt.xticks([])  # x 축 숨기기
+        plt.yticks([])  # y 축 숨기기
 
-### model test
-# model_test()
+        # 축 라인 숨기기
+        plt.gca().spines['top'].set_visible(False)  # 상단 축 숨기기
+        plt.gca().spines['right'].set_visible(False)  # 우측 축 숨기기
+        plt.gca().spines['left'].set_visible(False)  # 좌측 축 숨기기
+        plt.gca().spines['bottom'].set_visible(False)  # 하단 축 숨기기
+
+        # 이미지 파일로 저장
+        lab_user = "Hilal"
+        my_user = "dgw04"
+        save_path = f"C:\\Users\\{lab_env}\\pycharmProjects\\SoftActuratorModel\\datas\\outputs\\{target_angle}_{idx}.png"
+        plt.savefig(save_path)
+        # 현재 활성화된 그래프 창을 지웁니다.
+        plt.clf()
+
+#####main#####
+if __name__ == "__main__":
+
+    # ### candi 특징점 추출
+    target_angle = 20
+    candi = get_Top10_design(target_angle)
+    # # candi 출력해보기
+    # for loss, outer, inner in candi:
+    #     print(f"loss: {loss} points-outer: {outer[0]} points-inner: {inner[0]}")
+
+    ### numpy array로 바꾸기
+    points_drawing(candi, target_angle)
+    ### model test
+    # model_test()
