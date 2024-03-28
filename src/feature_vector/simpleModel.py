@@ -59,7 +59,7 @@ if __name__ == "__main__":
             print(f'Epoch [{epoch}/{num_epochs}], Average Loss: {total_loss/len(dataloader):.4f}')
 
     # 모델 저장하기
-    # torch.save(model.state_dict(), 'feature_vector_model.pth')
+    torch.save(model.state_dict(), 'feature_vector_model_labtop.pth')
     print("##############학습 완료############")
 
     #### 저장 이후 출력 테스팅

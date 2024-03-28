@@ -3,11 +3,11 @@ import os
 import re
 import numpy as np
 
-model_path = "C:\\Users\\dgw04\\pycharmProjects\\SoftActuratorModel\\src\\feature_vector\\feature_vector_model.pth"
-
+my_env = "dgw04"
+lab_env = "Hilal"
 #이미지 파일명을 통해 bandingangle값 float리스트로 반환
 def get_IMG_bandingAngle():
-    image_path = "C:\\Users\\Hilal\\PycharmProjects\\SoftActuratorModel\\datas\\afterIMG"
+    image_path = f"C:\\Users\\{my_env}\\PycharmProjects\\SoftActuratorModel\\datas\\afterIMG"
     Y_values = []
     image_filenames = os.listdir(image_path)
 

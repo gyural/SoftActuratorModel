@@ -23,7 +23,7 @@ def read_data_from_file(file_path):
 def get_feature_points():
     user = "dgw04"
     user_lab = "Hilal"
-    base_path = f"C:\\Users\\{user_lab}\\PycharmProjects\\SoftActuratorModel\\"
+    base_path = f"C:\\Users\\{user}\\PycharmProjects\\SoftActuratorModel\\"
     points_path = base_path + "datas\\points\\points.txt"
 
     file_path = points_path  # 파일 경로를 적절히 지정해주세요.
