@@ -7,7 +7,7 @@ my_env = "dgw04"
 lab_env = "Hilal"
 #이미지 파일명을 통해 bandingangle값 float리스트로 반환
 def get_IMG_bandingAngle():
-    image_path = f"C:\\Users\\{my_env}\\PycharmProjects\\SoftActuratorModel\\datas\\afterIMG"
+    image_path = f"C:\\Users\\{lab_env}\\PycharmProjects\\SoftActuratorModel\\datas\\afterIMG"
     Y_values = []
     image_filenames = os.listdir(image_path)
 
@@ -79,10 +79,12 @@ def create_pointy_rectangle(lower_left, upper_right, num_points, sharpness, thic
         new_points.append((upper_right[0] - thickness, lower_left[1] + thickness))  # 우측 하단점
 
         # 함수 작동시 마다 points 리턴하기
-        return points
+
+        return points, new_points
 
 def get_random_points():
     points_list = []
+    inner_point_list = []
     for j in range(1, 101):
         lower_left = (0, 0)
         upper_right = (20, 5)
@@ -91,7 +93,9 @@ def get_random_points():
         thickness = 0.3
 
         # DXF 파일 생성
-        p = create_pointy_rectangle(lower_left, upper_right, num_points, sharpness, thickness)
+        p, p_inner = create_pointy_rectangle(lower_left, upper_right, num_points, sharpness, thickness)
         points_list.append(p)
-    return points_list
+        inner_point_list.append(p_inner)
+    return points_list, inner_point_list
 
+# 기존포인트를 통해 smallpoints 추출
