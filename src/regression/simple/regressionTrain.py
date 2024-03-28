@@ -55,7 +55,6 @@ if __name__ == "__main__":
     # 모델 저장하기
     torch.save(model.state_dict(), 'image_regression_model.pth')
 
-
     print("##############학습 완료############")
     #### 저장 이후 출력 테스팅
     model.eval()
